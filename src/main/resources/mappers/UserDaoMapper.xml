@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yang.dao.UserDaoMapper">
+
+    <select id="selectUsers"  resultType="com.yang.entry.User">
+        SELECT
+            `id`,
+            `name`,
+            age,
+            IF (sex = 0, '女', '男'),
+            address,
+            phone_num,
+            is_delete
+        FROM
+            `user`
+        <where>
+            is_delete = 0
+            <if test="id != null and id !=''">
+                AND `id` = #{id}
+            </if>
+            <if test="name != null and name !=''">
+                AND `name` = #{name}
+            </if>
+            <if test="address != null and address !=''">
+                AND `address` = #{address}
+            </if>
+        </where>
+        ;
+    </select>
+
+    <update id="updateUser" parameterType="com.yang.entry.User">
+        UPDATE `user`
+        SET `name` = #{name}
+        WHERE
+        address = #{address};
+    </update>
+
+    <delete id="deleteUser" parameterType="com.yang.entry.User">
+        UPDATE `user`
+        SET is_delete = '1'
+        WHERE
+        `name` = #{name};
+    </delete>
+
+    <select id="getTotalPageNum" resultType="int">
+        SELECT
+          COUNT(id)
+        FROM
+           `user`
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="name != null and name !=''">
+                AND `name` = #{nama}
+            </if>
+            <if test="age != null and age !=''">
+                AND `age` = #{age}
+            </if>
+            <if test="sex != null and sex !=''">
+                AND `sex` = #{sex}
+            </if>
+            <if test="address != null and address !=''">
+                AND `address` = #{address}
+            </if>
+            <if test="phoneNumber != null and phoneNumber !=''">
+                AND `phoneNumber` = #{phoneNumber}
+            </if>
+            AND is_delete = 0
+        </trim>
+    </select>
+
+    <select id="getUserPage" resultType="com.yang.entry.User">
+        SELECT
+            `id`,
+            `name`,
+            age,
+            IF (sex = 0, '女', '男'),
+            address,
+            phone_num,
+            is_delete
+        FROM
+            `user`
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="selectCond.name != null and selectCond.name !=''">
+                AND `name` = #{selectCond..nama}
+            </if>
+            <if test="selectCond.age != null and selectCond.age !=''">
+                AND `age` = #{selectCond..age}
+            </if>
+            <if test="selectCond.sex != null and selectCond.sex !=''">
+                AND `sex` = #{selectCond..sex}
+            </if>
+            <if test="selectCond.address != null and selectCond.address !=''">
+                AND `address` = #{selectCond..address}
+            </if>
+            <if test="selectCond.phoneNumber != null and selectCond.phoneNumber !=''">
+                AND `phoneNumber` = #{selectCond..phoneNumber}
+            </if>
+            AND is_delete = 0
+            LIMIT #{currentPage},#{pageSize}
+        </trim>
+    </select>
+</mapper>
